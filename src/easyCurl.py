@@ -6,16 +6,7 @@ try:
 except ImportError:
     from StringIO import StringIO as BytesIO
 
-#from easyCurlData import optCurlMethods
-optCurlMethods = {'COMMON': [('pycurl.TIMEOUT', 'int', '10'),
-                             ('pycurl.VERBOSE', 'bool', 'False')],
-                  'GET'   : [('pycurl.HTTPGET', 'int', '1')],
-                  'POST'  : [('pycurl.POST', 'int', '1'),
-                             ('pycurl.POSTFIELDSIZE', 'int', 'len(requestBodyStr)')],
-                  'PUT'   : [('pycurl.UPLOAD', 'int', '1'),
-                             ('pycurl.INFILESIZE', 'int', 'len(requestBodyStr)')],
-                  'DELETE': [('pycurl.CUSTOMREQUEST', 'raw', 'DELETE')]
-}
+from easyCurlConfig import optCurlMethods
 
 def setOptCurl(c, opts):
     for opt in opts:
@@ -53,8 +44,11 @@ def runCurl(requestObj):
 
     return responseCode, responseHeaderStr, responseBodyStr
 
-from testcases import testcaseList
+from easyCurlTest import restCaseList
+from clsRest import *
 
-for tc in testcaseList:
-    requestBodyStr = tc[3]
-    print runCurl(tc)
+if(__name__ == '__main__'):
+    for restCase in restCaseList:
+        requestBodyStr = restCase.getRequest().getBody() 
+        restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
+        print restCase.getResponse()

@@ -33,3 +33,6 @@ testcaseList = [OBJ_GET,
                 OBJ_DELETE_OBJ01,
                 OBJ_DELETE_OBJ02,
                 OBJ_GET]
+
+import clsRest as r
+restCaseList = [r.RestCase(r.Request(obj)) for obj in testcaseList]
