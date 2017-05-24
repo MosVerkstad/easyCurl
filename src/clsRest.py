@@ -34,20 +34,27 @@ class Response:
         self.statusCode = None
         self.headers = None
         self.body = None
+        self.startTime = None
+        self.endTime = None
 
-    def __init__(self, statusCode, headers, body):
+    def __init__(self, statusCode, headers, body, startTime, endTime):
         self.statusCode = statusCode
         self.headers = headers
         self.body = body
+        self.startTime = startTime
+        self.endTime = endTime
 
     def __init__(self, obj):
-        self.statusCode, self.headers, self.body = obj
+        self.statusCode, self.headers, self.body, self.startTime, self.endTime = obj
 
     def setProperty(self, obj):
-        self.statusCode, self.headers, self.body = obj
+        self.statusCode, self.headers, self.body, self.startTime, self.endTime = obj
 
     def getProperty(self):
-        return self.statusCode, self.headers, self.body
+        return self.statusCode, self.headers, self.body, self.startTime, self.endTime
+
+    def getDuration(self):
+        return self.endTime - self.startTime
 
     def __str__(self):
         return 'clsRestResp: (' + str(self.statusCode) + '; ' + \

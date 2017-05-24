@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import pycurl
+from datetime import datetime
 try:
     from io import BytesIO
 except ImportError:
@@ -31,9 +32,11 @@ def runCurl(requestObj):
     c.setopt(c.WRITEFUNCTION, responseBody.write)
 
     try:
+        startTime = datetime.now()
         c.perform()
+        endTime = datetime.now()
     except Exception as e:
-        responseCode, responseHeaderStr, responseBodyStr = None, None, None
+        responseCode, responseHeaderStr, responseBodyStr, startTime, endTime = None, None, None, None, None
     else:
         responseCode, responseHeaderStr, responseBodyStr = c.getinfo(pycurl.RESPONSE_CODE), responseHeaders.getvalue(), responseBody.getvalue()
     finally:
@@ -42,7 +45,7 @@ def runCurl(requestObj):
         responseHeaders.close()
         responseBody.close()
 
-    return responseCode, responseHeaderStr, responseBodyStr
+    return responseCode, responseHeaderStr, responseBodyStr, startTime, endTime
 
 from easyCurlTest import genTsFromFile 
 from clsRest import *
@@ -88,4 +91,5 @@ if(__name__ == '__main__'):
             requestBodyStr = restCase.getRequest().getBody() 
             restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
             print restCase.getResponse()
+            print '>>>>', restCase.getResponse().getDuration(), '<<<<'
         print
