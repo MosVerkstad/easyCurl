@@ -1,0 +1,35 @@
+#!/usr/bin/python
+
+# URL for FOR ALL CASES
+URL       = 'http://easyCurl.com/test/objs'
+URL_OBJ01 = 'http://easyCurl.com/test/objs/myObj01'
+URL_OBJ02 = 'http://easyCurl.com/test/objs/myObj02'
+
+# REST METHOD FOR ALL OF CASES
+METHOD_POST   = 'POST'
+METHOD_GET    = 'GET'
+METHOD_DELETE = 'DELETE'
+METHOD_PUT    = 'PUT'
+
+# REQUEST HEADERS FOR ALL OF CASES
+HEADERS = ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+
+# REQUEST BODY FOR ALL OF CASES
+BODY_POST_OBJ01  = '{"id":"myObj","description":" the obj created for testing purpose","version":"0.0.1","validity":true}'
+BODY_PUT_OBJ02   = '{"description":" the second obj created for testing purpose","version":"0.0.1","validity":true}'
+BODY_EMPTY       = ''
+
+# REST CASES
+RC_POST_OBJ01   = (URL, METHOD_POST, HEADERS, BODY_POST_OBJ01)
+RC_PUT_OBJ02    = (URL_OBJ02, METHOD_PUT, HEADERS, BODY_PUT_OBJ02)
+RC_GET          = (URL, METHOD_GET, HEADERS, BODY_EMPTY)
+RC_DELETE_OBJ01 = (URL_OBJ01, METHOD_DELETE, HEADERS, BODY_EMPTY)
+RC_DELETE_OBJ02 = (URL_OBJ02, METHOD_DELETE, HEADERS, BODY_EMPTY)
+
+# TEST CASES
+TC_CREATE_DELETE = ('TC_CREATE_DELETE', [RC_POST_OBJ01, RC_PUT_OBJ02, RC_GET, RC_DELETE_OBJ01, RC_DELETE_OBJ02])
+TC_GET_NULL = ('TC_GET_NULL', [RC_GET])
+
+# TEST SUITE (THE VARIABLE NAME OF TEST SUITE SHOULD BE EASYCURL_TESTSUITE
+# OTHERWISE THE EASYCURL COULD NOT RECOGNIZE
+EASYCURL_TESTSUITE = ('TS_ECOBJ_01', [TC_GET_NULL, TC_CREATE_DELETE, TC_GET_NULL])

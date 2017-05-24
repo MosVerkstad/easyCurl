@@ -44,11 +44,48 @@ def runCurl(requestObj):
 
     return responseCode, responseHeaderStr, responseBodyStr
 
-from easyCurlTest import restCaseList
+from easyCurlTest import genTsFromFile 
 from clsRest import *
+import sys, getopt
+
+def parserOptions():
+    optionsLong = ['help', 'suite', 'report']
+    optionsShort = 'hs:r:'
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], optionsShort, optionsLong)
+    except getopt.GetoptError:
+        showHelp()
+
+    if len(args):
+        sys.stderr.write("Extraneous arguments: %s\n" % args)
+        sys.exit(3)
+
+    suite = None
+    report = None
+    for o, a in opts:
+        if o in ('-h', '--help'): showHelp()
+        if o in ('-s', '--suite'): suite = a
+        if o in ('-r', '--report'): report = a
+
+    return suite, report
+
+def showHelp():
+    helpMsg = 'Designed by Shirley Mosverkstad\n'\
+        'Usage: easyCurl [OPTION]...\n\n'\
+        '    -h, --help        Show this help\n'\
+        '    -s, --suite       Provide the test suite file name '\
+        'so far the supported file type: py, yaml, json, xml\n'\
+        '    -r, --report      Provide the test report (ongoing)\n\n'
+    sys.stdout.write(helpMsg)
+    sys.exit(3)
 
 if(__name__ == '__main__'):
-    for restCase in restCaseList:
-        requestBodyStr = restCase.getRequest().getBody() 
-        restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
-        print restCase.getResponse()
+    suite, report = parserOptions()
+    testSuite = genTsFromFile(suite)
+    for testCase in testSuite.getTestCases():
+        print testCase.getId()
+        for restCase in testCase.getRestCases():
+            requestBodyStr = restCase.getRequest().getBody() 
+            restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
+            print restCase.getResponse()
+        print

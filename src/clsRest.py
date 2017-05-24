@@ -53,7 +53,6 @@ class Response:
         return 'clsRestResp: (' + str(self.statusCode) + '; ' + \
                self.headers + '; ' + self.body + ')'
 
-
 class RestCase:
     def __init__(self):
         self.request = None
@@ -74,3 +73,25 @@ class RestCase:
 
     def getResponse(self):
         return self.response
+
+class TestCase:
+    def __init__(self, tcId, tcRestCaseList):
+        self.tcId = tcId
+        self.tcRestCases = [RestCase(Request(rc)) for rc in tcRestCaseList]
+
+    def getId(self):
+        return self.tcId
+
+    def getRestCases(self):
+        return self.tcRestCases
+
+class TestSuite:
+    def __init__(self, tsId, tsTestCaseList):
+        self.tsId = tsId
+        self.tsTestCases = [TestCase(tcId, tcRestCaseList) for (tcId, tcRestCaseList) in tsTestCaseList]
+
+    def getId(self):
+        return self.tsId
+
+    def getTestCases(self):
+        return self.tsTestCases
