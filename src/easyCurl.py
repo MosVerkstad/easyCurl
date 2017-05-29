@@ -68,9 +68,9 @@ def parserOptions():
     for o, a in opts:
         if o in ('-h', '--help'): showHelp()
         if o in ('-s', '--suite'): suite = a
-        if o in ('-r', '--report'): report = a
+        if o in ('-r', '--report'): report = a.split(',')
 
-    return suite, report
+    return suite, report if report != None else ['stdout']
 
 def showHelp():
     helpMsg = 'Designed by Shirley Mosverkstad\n'\
@@ -78,7 +78,9 @@ def showHelp():
         '    -h, --help        Show this help\n'\
         '    -s, --suite       Provide the test suite file name '\
         'so far the supported file type: py, yaml, json, xml\n'\
-        '    -r, --report      Provide the test report (ongoing)\n\n'
+        '    -r, --report      [default: stdout] Provide the test '\
+        'report, support multiple report format, seperated by comma. '\
+        'E.g. stdout,yaml,csv (ongoing)\n\n'
     sys.stdout.write(helpMsg)
     sys.exit(3)
 
@@ -86,10 +88,7 @@ if(__name__ == '__main__'):
     suite, report = parserOptions()
     testSuite = genTsFromFile(suite)
     for testCase in testSuite.getTestCases():
-        print testCase.getId()
         for restCase in testCase.getRestCases():
             requestBodyStr = restCase.getRequest().getBody() 
             restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
-            print restCase.getResponse()
-            print '>>>>', restCase.getResponse().getDuration(), '<<<<'
-        print
+        print testCase

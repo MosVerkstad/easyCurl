@@ -26,8 +26,9 @@ class Request:
         return self.body
 
     def __str__(self):
-        return 'clsRestRequ: (' + self.url + '; ' + self.method + '; ' + \
-               ','.join(self.headers) + '; ' + self.body + ')'
+        return '>>>> REST REQUEST SEND: \n\t' + self.url + '\n\t' + \
+               self.method + '\n\t' + \
+               ', '.join(self.headers) + '\n\t' + self.body + '\n'
 
 class Response:
     def __int__(self):
@@ -57,8 +58,9 @@ class Response:
         return self.endTime - self.startTime
 
     def __str__(self):
-        return 'clsRestResp: (' + str(self.statusCode) + '; ' + \
-               self.headers + '; ' + self.body + ')'
+        return '<<<< REST RESPONSE RECEIVE: \n==== LATENCY: ' + \
+               str(self.getDuration()) + ' ====\n' + str(self.statusCode) + \
+               '\n' + self.headers + '\n' + self.body + '\n'
 
 class RestCase:
     def __init__(self):
@@ -81,6 +83,9 @@ class RestCase:
     def getResponse(self):
         return self.response
 
+    def __str__(self):
+        return str(self.request) + str(self.response) + '\n'
+
 class TestCase:
     def __init__(self, tcId, tcRestCaseList):
         self.tcId = tcId
@@ -91,6 +96,9 @@ class TestCase:
 
     def getRestCases(self):
         return self.tcRestCases
+
+    def __str__(self):
+        return 'TEST CASE: ' + self.tcId + '\n' + ''.join([str(rc) for rc in self.tcRestCases])
 
 class TestSuite:
     def __init__(self, tsId, tsTestCaseList):
