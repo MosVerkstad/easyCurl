@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+KEYWORD_URL = 'URL'
+KEYWORD_METHOD = 'METHOD'
+KEYWORD_HEADERS = 'HEADERS'
+KEYWORD_BODY = 'BODY'
+
 class Request:
     def __init_(self):
         self.url = None
@@ -14,10 +19,18 @@ class Request:
         self.body = body
 
     def __init__(self, obj):
-        self.url, self.method, self.headers, self.body = obj
+        if isinstance(obj, dict):
+            self.url, self.method, self.headers, self.body = \
+            obj[KEYWORD_URL], obj[KEYWORD_METHOD], obj[KEYWORD_HEADERS], obj[KEYWORD_BODY]
+        elif isinstance(obj, tuple):
+            self.url, self.method, self.headers, self.body = obj
 
     def setProperty(self, obj):
-        self.url, self.method, self.headers, self.body = obj
+        if isinstance(obj, dict):
+            self.url, self.method, self.headers, self.body = \
+            obj[KEYWORD_URL], obj[KEYWORD_METHOD], obj[KEYWORD_HEADERS], obj[KEYWORD_BODY]
+        elif isinstance(obj, tuple):
+            self.url, self.method, self.headers, self.body = obj
 
     def getProperty(self):
         return self.url, self.method, self.headers, self.body
