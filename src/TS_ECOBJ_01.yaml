@@ -1,0 +1,34 @@
+TS_ECOBJ_01:
+    - TC_GET_NULL:
+        - URL: 'http://easyCurl.com/test/objs'
+          METHOD: 'GET'
+          HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+          BODY: ''
+
+    - TC_CREATE_DELETE:
+        - URL: 'http://easyCurl.com/test/objs'
+          METHOD: 'POST'
+          HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+          BODY: '{"id":"myObj","description":" the obj created for testing purpose","version":"0.0.1","validity":true}'
+        - URL: 'http://easyCurl.com/test/objs/myObj02'
+          METHOD: 'PUT'
+          HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+          BODY: '{"description":" the second obj created for testing purpose","version":"0.0.1","validity":true}'
+        - URL: 'http://easyCurl.com/test/objs'
+          METHOD: 'GET'
+          HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+          BODY: ''
+        - URL: 'http://easyCurl.com/test/objs/myObj01'
+          METHOD: 'DELETE'
+          HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+          BODY: ''
+        - URL: 'http://easyCurl.com/test/objs/myObj02'
+          METHOD: 'DELETE'
+          HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+          BODY: ''
+
+    - TC_GET_NULL:
+        - URL: 'http://easyCurl.com/test/objs'
+          METHOD: 'GET'
+          HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+          BODY: ''

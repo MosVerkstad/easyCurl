@@ -116,7 +116,7 @@ class TestCase:
 class TestSuite:
     def __init__(self, tsId, tsTestCaseList):
         self.tsId = tsId
-        self.tsTestCases = [TestCase(tcId, tcRestCaseList) for (tcId, tcRestCaseList) in tsTestCaseList]
+        self.tsTestCases = [TestCase(tc.keys()[0], tc.values()[0]) for tc in tsTestCaseList]
 
     def getId(self):
         return self.tsId
