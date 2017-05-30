@@ -4,6 +4,11 @@ KEYWORD_URL = 'URL'
 KEYWORD_METHOD = 'METHOD'
 KEYWORD_HEADERS = 'HEADERS'
 KEYWORD_BODY = 'BODY'
+KEYWORD_CONTROL = 'CONTROL'
+KEYWORD_EXPECT = 'EXPECT'
+KEYWORD_RC = 'RESTCASES'
+KEYWORD_TC = 'TESTCASES'
+
 
 class Request:
     def __init_(self):
@@ -100,9 +105,11 @@ class RestCase:
         return str(self.request) + str(self.response) + '\n'
 
 class TestCase:
-    def __init__(self, tcId, tcRestCaseList):
+    def __init__(self, tcId, tcObj):
         self.tcId = tcId
-        self.tcRestCases = [RestCase(Request(rc)) for rc in tcRestCaseList]
+        self.tcRestCases = [RestCase(Request(rc)) for rc in tcObj[KEYWORD_RC]] \
+                           if tcObj.get(KEYWORD_RC, None) != None else None
+        self.tcControl = tcObj.get(KEYWORD_CONTROL, None)
 
     def getId(self):
         return self.tcId
@@ -114,9 +121,11 @@ class TestCase:
         return 'TEST CASE: ' + self.tcId + '\n' + ''.join([str(rc) for rc in self.tcRestCases])
 
 class TestSuite:
-    def __init__(self, tsId, tsTestCaseList):
+    def __init__(self, tsId, tsObj):
         self.tsId = tsId
-        self.tsTestCases = [TestCase(tc.keys()[0], tc.values()[0]) for tc in tsTestCaseList]
+        self.tsTestCases = [TestCase(tc.keys()[0], tc.values()[0]) for tc in tsObj[KEYWORD_TC]] \
+                           if tsObj.get(KEYWORD_TC, None) != None else None
+        self.tsControl = tsObj.get(KEYWORD_CONTROL, None)
 
     def getId(self):
         return self.tsId
