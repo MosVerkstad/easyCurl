@@ -9,20 +9,7 @@ KEYWORD_EXPECT = 'EXPECT'
 KEYWORD_RC = 'RESTCASES'
 KEYWORD_TC = 'TESTCASES'
 
-
 class Request:
-    def __init_(self):
-        self.url = None
-        self.method = None
-        self.headers = None
-        self.body = None
-
-    def __init__(self, url, method, headers, body):
-        self.url = url
-        self.method = method
-        self.headers = headers
-        self.body = body
-
     def __init__(self, obj):
         if isinstance(obj, dict):
             self.url, self.method, self.headers, self.body = \
@@ -49,20 +36,6 @@ class Request:
                ', '.join(self.headers) + '\n\t' + self.body + '\n'
 
 class Response:
-    def __int__(self):
-        self.statusCode = None
-        self.headers = None
-        self.body = None
-        self.startTime = None
-        self.endTime = None
-
-    def __init__(self, statusCode, headers, body, startTime, endTime):
-        self.statusCode = statusCode
-        self.headers = headers
-        self.body = body
-        self.startTime = startTime
-        self.endTime = endTime
-
     def __init__(self, obj):
         self.statusCode, self.headers, self.body, self.startTime, self.endTime = obj
 
@@ -80,11 +53,24 @@ class Response:
                str(self.getDuration()) + ' ====\n' + str(self.statusCode) + \
                '\n' + self.headers + '\n' + self.body + '\n'
 
-class RestCase:
-    def __init__(self):
-        self.request = None
-        self.response = None
+class Control:
+    def getDefaultOpts(self):
+        return {'LOOP': '1', 'DELAY': '0'}
 
+    def __init__(self, controlLine=''):
+        self.optControls = self.getDefaultOpts()
+        if controlLine != '':
+            for c in controlLine.split(','):
+                pair = c.split(':')
+                if len(pair) == 2: key, value = pair[0].strip(), pair[1].strip()
+                else: key, value = None, None
+                if key != None and self.optControls.get(key, None) != None:
+                    self.optControls[key] = value
+
+    def getOpt(self, key):
+        return self.optControls[key]
+
+class RestCase:
     def __init__(self, request):
         self.request = request
         self.response = None
@@ -109,13 +95,17 @@ class TestCase:
         self.tcId = tcId
         self.tcRestCases = [RestCase(Request(rc)) for rc in tcObj[KEYWORD_RC]] \
                            if tcObj.get(KEYWORD_RC, None) != None else None
-        self.tcControl = tcObj.get(KEYWORD_CONTROL, None)
+        self.tcControl = Control(tcObj[KEYWORD_CONTROL]) \
+                         if tcObj.get(KEYWORD_CONTROL, None) != None else Control()
 
     def getId(self):
         return self.tcId
 
     def getRestCases(self):
         return self.tcRestCases
+
+    def getControl(self):
+        return self.tcControl
 
     def __str__(self):
         return 'TEST CASE: ' + self.tcId + '\n' + ''.join([str(rc) for rc in self.tcRestCases])
@@ -125,10 +115,14 @@ class TestSuite:
         self.tsId = tsId
         self.tsTestCases = [TestCase(tc.keys()[0], tc.values()[0]) for tc in tsObj[KEYWORD_TC]] \
                            if tsObj.get(KEYWORD_TC, None) != None else None
-        self.tsControl = tsObj.get(KEYWORD_CONTROL, None)
+        self.tsControl = Control(tsObj[KEYWORD_CONTROL]) \
+                         if tsObj.get(KEYWORD_CONTROL, None) != None else Control()
 
     def getId(self):
         return self.tsId
 
     def getTestCases(self):
         return self.tsTestCases
+
+    def getControl(self):
+        return self.tsControl

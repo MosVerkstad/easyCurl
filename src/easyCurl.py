@@ -2,12 +2,16 @@
 
 import pycurl
 from datetime import datetime
+import time
 try:
     from io import BytesIO
 except ImportError:
     from StringIO import StringIO as BytesIO
 
 from easyCurlConfig import optCurlMethods
+
+CONTROL_OPT_LOOP = 'LOOP'
+CONTROL_OPT_DELAY = 'DELAY'
 
 def setOptCurl(c, opts):
     for opt in opts:
@@ -87,8 +91,16 @@ def showHelp():
 if(__name__ == '__main__'):
     suite, report = parserOptions()
     testSuite = genTsFromFile(suite)
-    for testCase in testSuite.getTestCases():
-        for restCase in testCase.getRestCases():
-            requestBodyStr = restCase.getRequest().getBody() 
-            restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
-        print testCase
+    for cnt in range(int(testSuite.getControl().getOpt(CONTROL_OPT_LOOP))):
+
+        for testCase in testSuite.getTestCases():
+             for cnt in range(int(testCase.getControl().getOpt(CONTROL_OPT_LOOP))):
+
+                 for restCase in testCase.getRestCases():
+                     requestBodyStr = restCase.getRequest().getBody()
+                     restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
+
+                 print testCase
+                 time.sleep(int(testCase.getControl().getOpt(CONTROL_OPT_DELAY)))
+
+        time.sleep(int(testSuite.getControl().getOpt(CONTROL_OPT_DELAY)))
