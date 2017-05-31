@@ -1,0 +1,51 @@
+TS_ECOBJ_01:
+    TESTCASES: 
+        - TC_GET_NULL: 
+            RESTCASES: 
+                - URL: 'http://easyCurl.com/test/objs'
+                  METHOD: 'GET'
+                  HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+                  BODY: ''
+                  EXPECT: 'STATUSCODE:200'
+            CONTROL: 'LOOP:2, DELAY:1'
+
+        - TC_CREATE_DELETE:
+            RESTCASES: 
+                - URL: 'http://easyCurl.com/test/objs'
+                  METHOD: 'POST'
+                  HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+                  BODY: '{"id":"myObj","description":" the obj created for testing purpose","version":"0.0.1","validity":true}'
+                  EXPECT: 'STATUSCODE:201'
+
+                - URL: 'http://easyCurl.com/test/objs/myObj02'
+                  METHOD: 'PUT'
+                  HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+                  BODY: '{"description":" the second obj created for testing purpose","version":"0.0.1","validity":true}'
+                  EXPECT: 'STATUSCODE:201'
+
+                - URL: 'http://easyCurl.com/test/objs'
+                  METHOD: 'GET'
+                  HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+                  BODY: ''
+                  EXPECT: 'STATUSCODE:200'
+
+                - URL: 'http://easyCurl.com/test/objs/myObj01'
+                  METHOD: 'DELETE'
+                  HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+                  BODY: ''
+                  EXPECT: 'STATUSCODE:200'
+
+                - URL: 'http://easyCurl.com/test/objs/myObj02'
+                  METHOD: 'DELETE'
+                  HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+                  BODY: ''
+                  EXPECT: 'STATUSCODE:200'
+
+        - TC_GET_NULL:
+            RESTCASES: 
+                - URL: 'http://easyCurl.com/test/objs'
+                  METHOD: 'GET'
+                  HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
+                  BODY: ''
+                  EXPECT: 'STATUSCODE:200'
+            CONTROL: 'LOOP:2, DELAY:1'
