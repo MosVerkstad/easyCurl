@@ -9,6 +9,10 @@ KEYWORD_EXPECT = 'EXPECT'
 KEYWORD_RC = 'RESTCASES'
 KEYWORD_TC = 'TESTCASES'
 
+KEYWORD_RESULT_UNKNOWN = 'UNKNOWN'
+KEYWORD_RESULT_PASS = 'PASS'
+KEYWORD_RESULT_FAIL = 'FAIL'
+
 class Request:
     def __init__(self, obj):
         if isinstance(obj, dict):
@@ -51,6 +55,9 @@ class Response:
     def getProperty(self):
         return self.statusCode, self.headers, self.body, self.startTime, self.endTime
 
+    def getStatusCode(self):
+        return self.statusCode
+
     def getDuration(self):
         return self.endTime - self.startTime
 
@@ -80,9 +87,31 @@ class Control:
     def getOpt(self, key):
         return self.optControls[key]
 
+class Result:
+    def __init__(self, obj):
+        self.optExpect = {}
+        expectLine = obj.get(KEYWORD_EXPECT, '')
+        if expectLine != '':
+            for e in expectLine.split(','):
+                pair = e.split(':')
+                if len(pair) == 2: key, value = pair[0].strip(), pair[1].strip()
+                else: key, value = None, None
+                if key != None:
+                    if key == 'STATUSCODE': self.optExpect[key] = value.split('|')
+                    else: self.optExpect[key] = value
+
+    def checkStatusCode(self, statusCode):
+        result = (KEYWORD_RESULT_UNKNOWN, 'EXPECT is not set.')
+        if self.optExpect.get('STATUSCODE', None) != None:
+            detail = 'EXPECT: ' + str(self.optExpect['STATUSCODE']) + '; RESULT: ' + str(statusCode)
+            result = (KEYWORD_RESULT_PASS, detail) \
+                     if str(statusCode) in self.optExpect['STATUSCODE'] else (KEYWORD_RESULT_FAIL, detail)
+        return result
+
 class RestCase:
-    def __init__(self, request):
+    def __init__(self, request, result):
         self.request = request
+        self.result = result
         self.response = None
 
     def setRequest(self, request):
@@ -97,13 +126,20 @@ class RestCase:
     def getResponse(self):
         return self.response
 
+    def checkResult(self):
+        if self.response != None:
+            return self.result.checkStatusCode(self.response.getStatusCode())
+        else:
+            return (KEYWORD_RESULT_FAIL, 'NO RESPONSE')
+
     def __str__(self):
-        return str(self.request) + str(self.response) + '\n'
+        return str(self.request) + str(self.response) + '\n' + \
+               str(self.checkResult()) + '\n' + '='*80 + '\n\n'
 
 class TestCase:
     def __init__(self, tcId, tcObj):
         self.tcId = tcId
-        self.tcRestCases = [RestCase(Request(rc)) for rc in tcObj[KEYWORD_RC]] \
+        self.tcRestCases = [RestCase(Request(rc),Result(rc)) for rc in tcObj[KEYWORD_RC]] \
                            if tcObj.get(KEYWORD_RC, None) != None else None
         self.tcControl = Control(tcObj[KEYWORD_CONTROL]) \
                          if tcObj.get(KEYWORD_CONTROL, None) != None else Control()
