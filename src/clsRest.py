@@ -14,8 +14,10 @@ class Request:
         if isinstance(obj, dict):
             self.url, self.method, self.headers, self.body = \
             obj[KEYWORD_URL], obj[KEYWORD_METHOD], obj[KEYWORD_HEADERS], obj[KEYWORD_BODY]
+            self.startTime = None
         elif isinstance(obj, tuple):
             self.url, self.method, self.headers, self.body = obj
+            self.startTime = None
 
     def setProperty(self, obj):
         if isinstance(obj, dict):
@@ -24,6 +26,9 @@ class Request:
         elif isinstance(obj, tuple):
             self.url, self.method, self.headers, self.body = obj
 
+    def setStartTime(self, startTime):
+        self.startTime = startTime
+
     def getProperty(self):
         return self.url, self.method, self.headers, self.body
 
@@ -31,7 +36,8 @@ class Request:
         return self.body
 
     def __str__(self):
-        return '>>>> REST REQUEST SEND: \n\t' + self.url + '\n\t' + \
+        strStartTime = '(' + str(self.startTime) + ')' if self.startTime != None else ''
+        return '>>>> REST REQUEST SEND: ' + strStartTime + '\n\t' + self.url + '\n\t' + \
                self.method + '\n\t' + \
                ', '.join(self.headers) + '\n\t' + self.body + '\n'
 
@@ -48,8 +54,12 @@ class Response:
     def getDuration(self):
         return self.endTime - self.startTime
 
+    def getStartTime(self):
+        return self.startTime
+
     def __str__(self):
-        return '<<<< REST RESPONSE RECEIVE: \n==== LATENCY: ' + \
+        strEndTime = '(' + str(self.endTime) + ')' if self.endTime != None else ''
+        return '<<<< REST RESPONSE RECEIVE: ' + strEndTime + '\n==== LATENCY: ' + \
                str(self.getDuration()) + ' ====\n' + str(self.statusCode) + \
                '\n' + self.headers + '\n' + self.body + '\n'
 

@@ -8,7 +8,7 @@ try:
 except ImportError:
     from StringIO import StringIO as BytesIO
 
-from easyCurlConfig import optCurlMethods
+from easyCurlConfig import optCurlMethods, optCurlLogName
 
 CONTROL_OPT_LOOP = 'LOOP'
 CONTROL_OPT_DELAY = 'DELAY'
@@ -63,18 +63,16 @@ def parserOptions():
     except getopt.GetoptError:
         showHelp()
 
-    if len(args):
-        sys.stderr.write("Extraneous arguments: %s\n" % args)
-        sys.exit(3)
+    if len(opts) <= 0: showHelp()
 
     suite = None
     report = None
     for o, a in opts:
         if o in ('-h', '--help'): showHelp()
         if o in ('-s', '--suite'): suite = a
-        if o in ('-r', '--report'): report = a.split(',')
+        if o in ('-r', '--report'): report = a
 
-    return suite, report if report != None else ['stdout']
+    return suite, report if report != None else 'progress'
 
 def showHelp():
     helpMsg = 'Designed by Shirley Mosverkstad\n'\
@@ -82,15 +80,43 @@ def showHelp():
         '    -h, --help        Show this help\n'\
         '    -s, --suite       Provide the test suite file name '\
         'so far the supported file type: py, yaml, json, xml\n'\
-        '    -r, --report      [default: stdout] Provide the test '\
-        'report, support multiple report format, seperated by comma. '\
-        'E.g. stdout,yaml,csv (ongoing)\n\n'
+        '    -r, --report      [default: progress] Provide the test '\
+        'report displayed in the screen, value: progress or verbose.\n\n'
     sys.stdout.write(helpMsg)
     sys.exit(3)
+
+def totalRc(testSuite):
+    total = 0
+    for cnt in range(int(testSuite.getControl().getOpt(CONTROL_OPT_LOOP))):
+        for testCase in testSuite.getTestCases():
+            for cnt in range(int(testCase.getControl().getOpt(CONTROL_OPT_LOOP))):
+                for restCase in testCase.getRestCases():
+                    total = total + 1
+    return total
+
+def printProgress(current, total, report):
+    current = current + 1
+    if report == 'verbose': return current
+    progress = str(current * 1.0 / total * 100)
+    progressLeft, progressRight = progress.split('.')[0], progress.split('.')[1]
+    progressLeft = ' '*(3 - len(progressLeft)) + progressLeft if len(progressLeft) < 3 else progressLeft
+    progressRight = progressRight + '0'*(2 - len(progressRight)) if len(progressRight) < 2 else progressRight[:2]
+    progress = progressLeft + '.' + progressRight + '%'
+    completeNum = int(current * 1.0 / total * 50)
+    uncompleteNum = 50 - completeNum
+    bar = '[' + '='*completeNum + ' '*uncompleteNum + ']'
+    status = bar + progress + ' (' + str(current) + '/' + str(total) + ')'
+    sys.stdout.write('\r' + status)
+    sys.stdout.flush()
+    return current
 
 if(__name__ == '__main__'):
     suite, report = parserOptions()
     testSuite = genTsFromFile(suite)
+
+    fLog = open(optCurlLogName, 'w')
+    total = totalRc(testSuite)
+    current = 0
     for cnt in range(int(testSuite.getControl().getOpt(CONTROL_OPT_LOOP))):
 
         for testCase in testSuite.getTestCases():
@@ -99,8 +125,15 @@ if(__name__ == '__main__'):
                  for restCase in testCase.getRestCases():
                      requestBodyStr = restCase.getRequest().getBody()
                      restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
+                     restCase.getRequest().setStartTime(restCase.getResponse().getStartTime())
 
-                 print testCase
+                     current = printProgress(current, total, report)
+
+                 if report == 'verbose': print testCase
+                 fLog.write(str(testCase) + '\n\n')
                  time.sleep(int(testCase.getControl().getOpt(CONTROL_OPT_DELAY)))
 
         time.sleep(int(testSuite.getControl().getOpt(CONTROL_OPT_DELAY)))
+
+    fLog.close()
+    print
