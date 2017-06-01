@@ -42,7 +42,7 @@ class SumTc:
         for v in vList:
             if v == KEYWORD_RESULT_UNKNOWN: u = u + 1
             elif v == KEYWORD_RESULT_PASS: p = p + 1
-            elif v == KEYWORD_RESULT_FAIL: v = v + 1
+            elif v == KEYWORD_RESULT_FAIL: f = f + 1
         if KEYWORD_RESULT_FAIL in vList: self.tcVerdict = KEYWORD_RESULT_FAIL
         elif KEYWORD_RESULT_PASS in vList: self.tcVerdict = KEYWORD_RESULT_PASS
         else: self.tcVerdict = KEYWORD_RESULT_UNKNOWN
@@ -61,10 +61,7 @@ class SumTc:
         return tcSum
 
     def __str__(self):
-        tcSum = ''
-        for rc in self.rcList: tcSum = tcSum + str(rc)
-        return self.getTcSum() + tcSum
-        #return self.getTcSum() + ''.join([str(rc) for rc in self.rcList])
+        return self.getTcSum() + ''.join([str(rc) for rc in self.rcList])
 
 class SumTs:
     def __init__(self, tsPId, tsId):
@@ -89,7 +86,7 @@ class SumTs:
         for v in vList:
             if v == KEYWORD_RESULT_UNKNOWN: u = u + 1
             elif v == KEYWORD_RESULT_PASS: p = p + 1
-            elif v == KEYWORD_RESULT_FAIL: v = v + 1
+            elif v == KEYWORD_RESULT_FAIL: f = f + 1
         tsSum = self.tsId + ' (' + self.tsPId + ') ' + \
               KEYWORD_RESULT_PASS + ': ' + str(p) + '/' + str(l) + '; ' + \
               KEYWORD_RESULT_FAIL + ': ' + str(f) + '/' + str(l) + '; ' + \
