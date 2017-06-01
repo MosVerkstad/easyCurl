@@ -41,9 +41,9 @@ class Request:
 
     def __str__(self):
         strStartTime = '(' + str(self.startTime) + ')' if self.startTime != None else ''
-        return '>>>> REST REQUEST SEND: ' + strStartTime + '\n\t' + self.url + '\n\t' + \
-               self.method + '\n\t' + \
-               ', '.join(self.headers) + '\n\t' + self.body + '\n'
+        return '>>>> REST REQUEST SEND: ' + strStartTime + '\n' + self.method + ' ' + \
+               self.url + '\n' + \
+               ', '.join(self.headers) + '\n' + self.body + '\n'
 
 class Response:
     def __init__(self, obj):
@@ -66,9 +66,9 @@ class Response:
 
     def __str__(self):
         strEndTime = '(' + str(self.endTime) + ')' if self.endTime != None else ''
-        return '<<<< REST RESPONSE RECEIVE: ' + strEndTime + '\n==== LATENCY: ' + \
-               str(self.getDuration()) + ' ====\n' + str(self.statusCode) + \
-               '\n' + self.headers + '\n' + self.body + '\n'
+        return '<<<< REST RESPONSE RECEIVE: ' + strEndTime + '\n    (LATENCY: ' + \
+               str(self.getDuration()) + ')\n' + \
+               self.headers + '\n' + self.body + '\n'
 
 class Control:
     def getDefaultOpts(self):
@@ -87,7 +87,7 @@ class Control:
     def getOpt(self, key):
         return self.optControls[key]
 
-class Result:
+class Expect:
     def __init__(self, obj):
         self.optExpect = {}
         expectLine = obj.get(KEYWORD_EXPECT, '')
@@ -109,10 +109,11 @@ class Result:
         return result
 
 class RestCase:
-    def __init__(self, request, result):
+    def __init__(self, request, expect):
         self.request = request
-        self.result = result
+        self.expect = expect
         self.response = None
+        self.pId = None
 
     def setRequest(self, request):
         self.request = request
@@ -126,23 +127,28 @@ class RestCase:
     def getResponse(self):
         return self.response
 
+    def setPId(self, pId):
+        self.pId = pId
+
     def checkResult(self):
         if self.response != None:
-            return self.result.checkStatusCode(self.response.getStatusCode())
+            return self.expect.checkStatusCode(self.response.getStatusCode())
         else:
             return (KEYWORD_RESULT_FAIL, 'NO RESPONSE')
 
     def __str__(self):
-        return str(self.request) + str(self.response) + '\n' + \
+        return 'REST CASE PROCESS ID: ' + str(self.pId) + '\n' + \
+               str(self.request) + str(self.response) + '\n' + \
                str(self.checkResult()) + '\n' + '='*80 + '\n\n'
 
 class TestCase:
     def __init__(self, tcId, tcObj):
         self.tcId = tcId
-        self.tcRestCases = [RestCase(Request(rc),Result(rc)) for rc in tcObj[KEYWORD_RC]] \
+        self.tcRestCases = [RestCase(Request(rc),Expect(rc)) for rc in tcObj[KEYWORD_RC]] \
                            if tcObj.get(KEYWORD_RC, None) != None else None
         self.tcControl = Control(tcObj[KEYWORD_CONTROL]) \
                          if tcObj.get(KEYWORD_CONTROL, None) != None else Control()
+        self.pId = None
 
     def getId(self):
         return self.tcId
@@ -153,8 +159,18 @@ class TestCase:
     def getControl(self):
         return self.tcControl
 
+    def setPId(self, pId):
+        self.pId = pId
+
+    def clean(self):
+        for rc in self.tcRestCases:
+            rc.setResponse(None)
+            rc.setPId(None)
+
     def __str__(self):
-        return 'TEST CASE: ' + self.tcId + '\n' + ''.join([str(rc) for rc in self.tcRestCases])
+        return 'TEST CASE: ' + self.tcId + ' ' + \
+               '( PROCESS ID: ' + str(self.pId) + ')\n' + \
+               ''.join([str(rc) for rc in self.tcRestCases])
 
 class TestSuite:
     def __init__(self, tsId, tsObj):
@@ -163,6 +179,7 @@ class TestSuite:
                            if tsObj.get(KEYWORD_TC, None) != None else None
         self.tsControl = Control(tsObj[KEYWORD_CONTROL]) \
                          if tsObj.get(KEYWORD_CONTROL, None) != None else Control()
+        self.pId = None
 
     def getId(self):
         return self.tsId
@@ -172,3 +189,6 @@ class TestSuite:
 
     def getControl(self):
         return self.tsControl
+
+    def setPId(self, pId):
+        self.pId = pId
