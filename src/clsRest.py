@@ -130,6 +130,17 @@ class RestCase:
     def setPId(self, pId):
         self.pId = pId
 
+    def getPId(self):
+        return self.pId
+
+    def getMethod(self):
+        u, m, h, b = self.request.getProperty()
+        return m
+
+    def getUrl(self):
+        u, m, h, b = self.request.getProperty()
+        return u
+
     def checkResult(self):
         if self.response != None:
             return self.expect.checkStatusCode(self.response.getStatusCode())

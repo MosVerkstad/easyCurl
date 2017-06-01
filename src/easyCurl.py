@@ -53,6 +53,7 @@ def runCurl(requestObj):
 
 from easyCurlTest import genTsFromFile 
 from clsRest import *
+from clsSum import *
 import sys, getopt
 import uuid
 
@@ -122,18 +123,28 @@ if(__name__ == '__main__'):
     fLog = open(optCurlLogName, 'w')
     total = totalRc(testSuite)
     current = 0
+    tsSum = Sum()
+
     for cnt in range(int(testSuite.getControl().getOpt(CONTROL_OPT_LOOP))):
-        testSuite.setPId(genPId())
+        tsPId = genPId()
+        testSuite.setPId(tsPId)
+        tsSum.addTs(tsPId, testSuite.getId())
 
         for testCase in testSuite.getTestCases():
              for cnt in range(int(testCase.getControl().getOpt(CONTROL_OPT_LOOP))):
-                 testCase.setPId(genPId())
+                 tcPId = genPId()
+                 testCase.setPId(tcPId)
+                 tsSum.getTs(tsPId).addTc(tcPId, testCase.getId())
 
                  for restCase in testCase.getRestCases():
-                     restCase.setPId(genPId())
+                     rcPId = genPId()
+                     restCase.setPId(rcPId)
+
                      requestBodyStr = restCase.getRequest().getBody()
                      restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
                      restCase.getRequest().setStartTime(restCase.getResponse().getStartTime())
+
+                     tsSum.getTs(tsPId).getTc(tcPId).addRc(rcPId, restCase.getMethod(), restCase.getUrl(), restCase.checkResult())
 
                      current = current + 1
                      if not verbose(display): printProgress(current, total)
@@ -147,3 +158,4 @@ if(__name__ == '__main__'):
 
     fLog.close()
     print
+    print tsSum
