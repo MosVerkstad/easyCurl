@@ -54,6 +54,7 @@ def runCurl(requestObj):
 from easyCurlTest import genTsFromFile 
 from clsRest import *
 import sys, getopt
+import uuid
 
 def parserOptions():
     optionsLong = ['help', 'suite', 'display', 'report']
@@ -112,6 +113,8 @@ def printProgress(current, total):
 
 def verbose(display): return display == 'verbose'
 
+def genPId(): return str(uuid.uuid4().hex)[:8]
+
 if(__name__ == '__main__'):
     suite, display, report = parserOptions()
     testSuite = genTsFromFile(suite)
@@ -120,11 +123,14 @@ if(__name__ == '__main__'):
     total = totalRc(testSuite)
     current = 0
     for cnt in range(int(testSuite.getControl().getOpt(CONTROL_OPT_LOOP))):
+        testSuite.setPId(genPId())
 
         for testCase in testSuite.getTestCases():
              for cnt in range(int(testCase.getControl().getOpt(CONTROL_OPT_LOOP))):
+                 testCase.setPId(genPId())
 
                  for restCase in testCase.getRestCases():
+                     restCase.setPId(genPId())
                      requestBodyStr = restCase.getRequest().getBody()
                      restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
                      restCase.getRequest().setStartTime(restCase.getResponse().getStartTime())
@@ -134,6 +140,7 @@ if(__name__ == '__main__'):
 
                  if verbose(display): print testCase
                  fLog.write(str(testCase) + '\n\n')
+                 testCase.clean()
                  time.sleep(int(testCase.getControl().getOpt(CONTROL_OPT_DELAY)))
 
         time.sleep(int(testSuite.getControl().getOpt(CONTROL_OPT_DELAY)))
