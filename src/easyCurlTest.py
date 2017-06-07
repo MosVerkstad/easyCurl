@@ -32,7 +32,6 @@ def genTsFromFile(tsFile):
     tsFileName, tsFilePrefix, tsFileExt, tsArgs = parserTsArgs(tsFile)
     if tsFileExt == EXT_PY:
         tsImportModule = __import__(tsFilePrefix, globals(), locals(), [], -1)
-        tsImportModule.generateTs(tsArgs)
         return createTs(tsImportModule.generateTs(tsArgs))
     elif tsFileExt == EXT_YAML:
         return createTs(importYaml(tsFileName))
