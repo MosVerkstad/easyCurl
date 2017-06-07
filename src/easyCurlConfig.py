@@ -8,6 +8,9 @@ optCurlMethods = {'COMMON': [('pycurl.TIMEOUT', 'int', '10'),
                              ('pycurl.POSTFIELDSIZE', 'int', 'len(requestBodyStr)')],
                   'PUT'   : [('pycurl.UPLOAD', 'int', '1'),
                              ('pycurl.INFILESIZE', 'int', 'len(requestBodyStr)')],
+                  'PATCH' : [('pycurl.POSTFIELDS', 'str', 'requestBodyStr'),
+                             ('pycurl.CUSTOMREQUEST', 'raw', 'PATCH'),
+                             ('pycurl.INFILESIZE', 'int', 'len(requestBodyStr)')],
                   'DELETE': [('pycurl.CUSTOMREQUEST', 'raw', 'DELETE')]
 }
 

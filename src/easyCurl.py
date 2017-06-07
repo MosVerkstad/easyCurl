@@ -17,6 +17,7 @@ def setOptCurl(c, opts):
     for opt in opts:
         if opt[1] == 'int':    c.setopt(eval(opt[0]), int(eval(opt[2])))
         elif opt[1] == 'bool': c.setopt(eval(opt[0]), bool(eval(opt[2])))
+        elif opt[1] == 'str':  c.setopt(eval(opt[0]), str(eval(opt[2])))
         elif opt[1] == 'raw':  c.setopt(eval(opt[0]), opt[2])
     return c
 
@@ -27,7 +28,8 @@ def runCurl(requestObj):
     responseBody = BytesIO()
     responseCode, responseHeaderStr, responseBodyStr = None, None, None
 
-    c = setOptCurl(setOptCurl(pycurl.Curl(), optCurlMethods['COMMON']), optCurlMethods[method])
+    if optCurlMethods.get(method, None) != None:
+        c = setOptCurl(setOptCurl(pycurl.Curl(), optCurlMethods['COMMON']), optCurlMethods[method])
 
     c.setopt(c.URL, url)
     c.setopt(c.HTTPHEADER, requestHeaders)
