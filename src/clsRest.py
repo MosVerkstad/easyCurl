@@ -39,6 +39,9 @@ class Request:
     def getBody(self):
         return self.body
 
+    def getMethod(self):
+        return self.method
+
     def __str__(self):
         strStartTime = '(' + str(self.startTime) + ')' if self.startTime != None else ''
         return '>>>> REST REQUEST SEND: ' + strStartTime + '\n' + self.method + ' ' + \
@@ -59,7 +62,7 @@ class Response:
         return self.statusCode
 
     def getDuration(self):
-        return self.endTime - self.startTime
+        return self.endTime - self.startTime if self.endTime != None and self.startTime != None else 0
 
     def getStartTime(self):
         return self.startTime
@@ -68,7 +71,7 @@ class Response:
         strEndTime = '(' + str(self.endTime) + ')' if self.endTime != None else ''
         return '<<<< REST RESPONSE RECEIVE: ' + strEndTime + '\n    (LATENCY: ' + \
                str(self.getDuration()) + ')\n' + \
-               self.headers + '\n' + self.body + '\n'
+               str(self.headers) + '\n' + str(self.body) + '\n'
 
 class Control:
     def getDefaultOpts(self):

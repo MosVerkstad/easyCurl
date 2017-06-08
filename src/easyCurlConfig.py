@@ -11,7 +11,12 @@ optCurlMethods = {'COMMON': [('pycurl.TIMEOUT', 'int', '10'),
                   'PATCH' : [('pycurl.POSTFIELDS', 'str', 'requestBodyStr'),
                              ('pycurl.CUSTOMREQUEST', 'raw', 'PATCH'),
                              ('pycurl.INFILESIZE', 'int', 'len(requestBodyStr)')],
-                  'DELETE': [('pycurl.CUSTOMREQUEST', 'raw', 'DELETE')]
+                  'DELETE': [('pycurl.CUSTOMREQUEST', 'raw', 'DELETE'),
+                             ('pycurl.POSTFIELDS', 'str', 'requestBodyStr'),
+                             ('pycurl.POSTFIELDSIZE', 'int', 'len(requestBodyStr)')],
+                  'OTHERS': [('pycurl.CUSTOMREQUEST', 'str', 'method'),
+                             ('pycurl.POSTFIELDS', 'str', 'requestBodyStr'),
+                             ('pycurl.POSTFIELDSIZE', 'int', 'len(requestBodyStr)')]
 }
 
 # LOG FILE NAME
