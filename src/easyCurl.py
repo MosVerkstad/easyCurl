@@ -28,8 +28,8 @@ def runCurl(requestObj):
     responseBody = BytesIO()
     responseCode, responseHeaderStr, responseBodyStr = None, None, None
 
-    if optCurlMethods.get(method, None) != None:
-        c = setOptCurl(setOptCurl(pycurl.Curl(), optCurlMethods['COMMON']), optCurlMethods[method])
+    cType = method if optCurlMethods.get(method, None) != None else 'OTHERS'
+    c = setOptCurl(setOptCurl(pycurl.Curl(), optCurlMethods['COMMON']), optCurlMethods[cType])
 
     c.setopt(c.URL, url)
     c.setopt(c.HTTPHEADER, requestHeaders)
@@ -143,6 +143,7 @@ if(__name__ == '__main__'):
                      restCase.setPId(rcPId)
 
                      requestBodyStr = restCase.getRequest().getBody()
+                     method = restCase.getRequest().getMethod()
                      restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
                      restCase.getRequest().setStartTime(restCase.getResponse().getStartTime())
 
