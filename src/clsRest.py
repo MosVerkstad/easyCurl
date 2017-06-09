@@ -50,16 +50,19 @@ class Request:
 
 class Response:
     def __init__(self, obj):
-        self.statusCode, self.headers, self.body, self.startTime, self.endTime = obj
+        self.statusCode, self.headers, self.body, self.startTime, self.endTime, self.error = obj
 
     def setProperty(self, obj):
-        self.statusCode, self.headers, self.body, self.startTime, self.endTime = obj
+        self.statusCode, self.headers, self.body, self.startTime, self.endTime, self.error = obj
 
     def getProperty(self):
-        return self.statusCode, self.headers, self.body, self.startTime, self.endTime
+        return self.statusCode, self.headers, self.body, self.startTime, self.endTime, self.error
 
     def getStatusCode(self):
         return self.statusCode
+
+    def getError(self):
+        return self.error
 
     def getDuration(self):
         return self.endTime - self.startTime if self.endTime != None and self.startTime != None else 0
@@ -146,7 +149,10 @@ class RestCase:
 
     def checkResult(self):
         if self.response != None:
-            return self.expect.checkStatusCode(self.response.getStatusCode())
+            if self.response.getStatusCode() != None:
+                return self.expect.checkStatusCode(self.response.getStatusCode())
+            else:
+                return (KEYWORD_RESULT_FAIL, str(self.response.getError()))
         else:
             return (KEYWORD_RESULT_FAIL, 'NO RESPONSE')
 

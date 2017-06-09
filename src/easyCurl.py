@@ -42,16 +42,16 @@ def runCurl(requestObj):
         c.perform()
         endTime = datetime.now()
     except Exception as e:
-        responseCode, responseHeaderStr, responseBodyStr, startTime, endTime = None, None, None, None, None
+        responseCode, responseHeaderStr, responseBodyStr, startTime, endTime, error = None, None, None, None, None, e
     else:
-        responseCode, responseHeaderStr, responseBodyStr = c.getinfo(pycurl.RESPONSE_CODE), responseHeaders.getvalue(), responseBody.getvalue()
+        responseCode, responseHeaderStr, responseBodyStr, error = c.getinfo(pycurl.RESPONSE_CODE), responseHeaders.getvalue(), responseBody.getvalue(), None
     finally:
         c.close()
         requestBody.close()
         responseHeaders.close()
         responseBody.close()
 
-    return responseCode, responseHeaderStr, responseBodyStr, startTime, endTime
+    return responseCode, responseHeaderStr, responseBodyStr, startTime, endTime, error
 
 from easyCurlTest import genTsFromFile 
 from clsRest import *
