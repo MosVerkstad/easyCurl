@@ -1,61 +1,14 @@
 #!/usr/bin/python
 
-import pycurl
 from datetime import datetime
 import time
-try:
-    from io import BytesIO
-except ImportError:
-    from StringIO import StringIO as BytesIO
 
-from easyCurlConfig import optCurlMethods, optCurlLogName
+from kernel.easyCurlConfig import optCurlMethods, optCurlLogName
+from kernel.easyCurlKernel import runCurl
 
-CONTROL_OPT_LOOP = 'LOOP'
-CONTROL_OPT_DELAY = 'DELAY'
-
-def setOptCurl(c, opts):
-    for opt in opts:
-        if opt[1] == 'int':    c.setopt(eval(opt[0]), int(eval(opt[2])))
-        elif opt[1] == 'bool': c.setopt(eval(opt[0]), bool(eval(opt[2])))
-        elif opt[1] == 'str':  c.setopt(eval(opt[0]), str(eval(opt[2])))
-        elif opt[1] == 'raw':  c.setopt(eval(opt[0]), opt[2])
-    return c
-
-def runCurl(requestObj):
-    url, method, requestHeaders, requestBodyStr = requestObj
-    requestBody = BytesIO(requestBodyStr)
-    responseHeaders = BytesIO()
-    responseBody = BytesIO()
-    responseCode, responseHeaderStr, responseBodyStr = None, None, None
-
-    cType = method if optCurlMethods.get(method, None) != None else 'OTHERS'
-    c = setOptCurl(setOptCurl(pycurl.Curl(), optCurlMethods['COMMON']), optCurlMethods[cType])
-
-    c.setopt(c.URL, url)
-    c.setopt(c.HTTPHEADER, requestHeaders)
-    c.setopt(c.READFUNCTION, requestBody.read)
-    c.setopt(c.HEADERFUNCTION, responseHeaders.write)
-    c.setopt(c.WRITEFUNCTION, responseBody.write)
-
-    try:
-        startTime = datetime.now()
-        c.perform()
-        endTime = datetime.now()
-    except Exception as e:
-        responseCode, responseHeaderStr, responseBodyStr, startTime, endTime, error = None, None, None, None, None, e
-    else:
-        responseCode, responseHeaderStr, responseBodyStr, error = c.getinfo(pycurl.RESPONSE_CODE), responseHeaders.getvalue(), responseBody.getvalue(), None
-    finally:
-        c.close()
-        requestBody.close()
-        responseHeaders.close()
-        responseBody.close()
-
-    return responseCode, responseHeaderStr, responseBodyStr, startTime, endTime, error
-
-from easyCurlTest import genTsFromFile 
-from clsRest import *
-from clsSum import *
+from wrap.easyCurlTest import genTsFromFile 
+from wrap.clsRest import *
+from wrap.clsSum import *
 import sys, getopt
 import uuid
 
@@ -121,6 +74,7 @@ def genPId(): return str(uuid.uuid4().hex)[:8]
 if(__name__ == '__main__'):
     suite, display, report = parserOptions()
     testSuite = genTsFromFile(suite)
+    global requestBodyStr
 
     fLog = open(optCurlLogName, 'w')
     total = totalRc(testSuite)
