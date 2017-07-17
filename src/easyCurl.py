@@ -74,7 +74,6 @@ def genPId(): return str(uuid.uuid4().hex)[:8]
 if(__name__ == '__main__'):
     suite, display, report = parserOptions()
     testSuite = genTsFromFile(suite)
-    global requestBodyStr
 
     fLog = open(optCurlLogName, 'w')
     total = totalRc(testSuite)
@@ -96,8 +95,6 @@ if(__name__ == '__main__'):
                      rcPId = genPId()
                      restCase.setPId(rcPId)
 
-                     requestBodyStr = restCase.getRequest().getBody()
-                     method = restCase.getRequest().getMethod()
                      restCase.setResponse(Response(runCurl(restCase.getRequest().getProperty())))
                      restCase.getRequest().setStartTime(restCase.getResponse().getStartTime())
 

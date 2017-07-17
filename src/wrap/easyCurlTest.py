@@ -31,8 +31,6 @@ def parserTsArgs(tsFile):
 def genTsFromFile(tsFile):
     tsFileName, tsModule, tsFileExt, tsArgs = parserTsArgs(tsFile)
     if tsFileExt == EXT_PY:
-        print tsModule, tsFileName
-        print os.getcwd()
         tsImportModule = imp.load_source(tsModule, tsFileName)
         return createTs(tsImportModule.generateTs(tsArgs))
     elif tsFileExt == EXT_YAML:
