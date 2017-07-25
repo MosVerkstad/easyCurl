@@ -20,6 +20,10 @@ def generateTs(args):
                         e.rc('RC_GROUPS_GET_WRONGURL'), \
                         e.rc('RC_GROUPS_GET_WRONGBODY'), \
                         e.rc('RC_GROUPS_GET'), \
+                        e.rc('RC_GROUPS_POST'), \
+                        e.rc('RC_GROUPS_GET'), \
+                        e.rc('RC_GROUPS_DELETE'), \
+                        e.rc('RC_GROUPS_GET'), \
                    ]}},\
                    ]
                }
