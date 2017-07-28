@@ -30,7 +30,8 @@ class Request:
 
     def __str__(self):
         strStartTime = '(' + str(self.startTime) + ')' if self.startTime != None else ''
-        return '>>>> REST REQUEST SEND: ' + strStartTime + '\n' + self.method + ' ' + \
+        return 'REST CASE REQUEST ID: ' + self.rcId + '\n' + \
+               '>>>> REST REQUEST SEND: ' + strStartTime + '\n' + self.method + ' ' + \
                self.url + '\n' + \
                ', '.join(self.headers) + '\n' + self.body + '\n'
 
