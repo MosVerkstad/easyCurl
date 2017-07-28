@@ -18,8 +18,8 @@ def setOptCurl(c, opts):
     return c
 
 def runCurl(requestObj):
-    global url, method, requestHeaders, requestBodyStr
-    url, method, requestHeaders, requestBodyStr = requestObj
+    global rcId, url, method, requestHeaders, requestBodyStr
+    rcId, url, method, requestHeaders, requestBodyStr = requestObj
     requestBody = BytesIO(requestBodyStr)
     responseHeaders = BytesIO()
     responseBody = BytesIO()
