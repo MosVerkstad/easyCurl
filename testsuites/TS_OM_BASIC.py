@@ -10,7 +10,6 @@ def generateTs(args):
     KEYWORD_TC = 'TESTCASES'
     KEYWORD_RC = 'RESTCASES'
 
-    print fileNames
     e = getErcConfig(getArgv(fileNames))
 
     return {'TS_OM_BASIC': \
