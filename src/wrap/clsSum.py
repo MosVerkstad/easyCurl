@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from clsRest import *
+from constants import *
 
 class SumRc:
-    def __init__(self, rcPId, method, url, result):
+    def __init__(self, rcPId, rcId, method, url, result):
         self.rcPId = rcPId
+        self.rcId = rcId
         self.method = method
         self.url = url
         self.verdict, self.info = result
@@ -16,7 +17,7 @@ class SumRc:
     def __str__(self):
         infoStr = '' if self.verdict == KEYWORD_RESULT_PASS else self.info
         return self.indent + '(' + self.rcPId + ': ' + self.verdict + ') ' + \
-               self.method + ' ' + self.url + ' ' + infoStr + '\n'
+               self.rcId + ' ' + infoStr + '\n'
 
 class SumTc:
     def __init__(self, tcPId, tcId):
@@ -27,8 +28,8 @@ class SumTc:
         self.tcVerdict = KEYWORD_RESULT_UNKNOWN
         self.indent = ' '*4
 
-    def addRc(self, rcPId, method, url, result):
-        rc = SumRc(rcPId, method, url, result)
+    def addRc(self, rcPId, rcId, method, url, result):
+        rc = SumRc(rcPId, rcId, method, url, result)
         self.rcList.append(rc)
         self.rcDict[rcPId] = rc
 
@@ -55,9 +56,9 @@ class SumTc:
         u, p, f, l = self.calcSum()
         tcSum = self.indent + self.tcId + \
               ' (' + self.tcPId + ': ' + self.tcVerdict + ') ' + \
-              KEYWORD_RESULT_PASS + ': ' + str(p) + '/' + str(l) + '; ' + \
-              KEYWORD_RESULT_FAIL + ': ' + str(f) + '/' + str(l) + '; ' + \
-              KEYWORD_RESULT_UNKNOWN + ': ' + str(u) + '/' + str(l) + '\n'
+              KEYWORD_RESULT_PASS + ': ' + str(p) + '/' + str(l-u) + '; ' + \
+              KEYWORD_RESULT_FAIL + ': ' + str(f) + '/' + str(l-u) + '; ' + \
+              KEYWORD_RESULT_UNKNOWN + ': ' + str(u) + '\n'
         return tcSum
 
     def __str__(self):
@@ -88,9 +89,9 @@ class SumTs:
             elif v == KEYWORD_RESULT_PASS: p = p + 1
             elif v == KEYWORD_RESULT_FAIL: f = f + 1
         tsSum = self.tsId + ' (' + self.tsPId + ') ' + \
-              KEYWORD_RESULT_PASS + ': ' + str(p) + '/' + str(l) + '; ' + \
-              KEYWORD_RESULT_FAIL + ': ' + str(f) + '/' + str(l) + '; ' + \
-              KEYWORD_RESULT_UNKNOWN + ': ' + str(u) + '/' + str(l) + '\n' + \
+              KEYWORD_RESULT_PASS + ': ' + str(p) + '/' + str(l-u) + '; ' + \
+              KEYWORD_RESULT_FAIL + ': ' + str(f) + '/' + str(l-u) + '; ' + \
+              KEYWORD_RESULT_UNKNOWN + ': ' + str(u) + '\n' + \
               tsSum
         return tsSum
 

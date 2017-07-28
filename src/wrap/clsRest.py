@@ -1,43 +1,26 @@
 #!/usr/bin/env python
 
-KEYWORD_URL = 'URL'
-KEYWORD_METHOD = 'METHOD'
-KEYWORD_HEADERS = 'HEADERS'
-KEYWORD_BODY = 'BODY'
-KEYWORD_CONTROL = 'CONTROL'
-KEYWORD_EXPECT = 'EXPECT'
-KEYWORD_RC = 'RESTCASES'
-KEYWORD_TC = 'TESTCASES'
-
-CONTROL_OPT_LOOP = 'LOOP'
-CONTROL_OPT_DELAY = 'DELAY'
-
-KEYWORD_RESULT_UNKNOWN = 'UNKNOWN'
-KEYWORD_RESULT_PASS = 'PASS'
-KEYWORD_RESULT_FAIL = 'FAIL'
+from constants import *
 
 class Request:
     def __init__(self, obj):
-        if isinstance(obj, dict):
-            self.url, self.method, self.headers, self.body = \
-            obj[KEYWORD_URL], obj[KEYWORD_METHOD], obj[KEYWORD_HEADERS], obj[KEYWORD_BODY]
-            self.startTime = None
-        elif isinstance(obj, tuple):
-            self.url, self.method, self.headers, self.body = obj
-            self.startTime = None
+        self.rcId, self.url, self.method, self.headers, self.body = \
+        None,      None,     None,        None,         None
+        self.startTime = None
+        self.setProperty(obj)
 
     def setProperty(self, obj):
         if isinstance(obj, dict):
-            self.url, self.method, self.headers, self.body = \
-            obj[KEYWORD_URL], obj[KEYWORD_METHOD], obj[KEYWORD_HEADERS], obj[KEYWORD_BODY]
+            self.rcId, self.url, self.method, self.headers, self.body = \
+            obj[KEYWORD_RCID], obj[KEYWORD_URL], obj[KEYWORD_METHOD], obj[KEYWORD_HEADERS], obj[KEYWORD_BODY]
         elif isinstance(obj, tuple):
-            self.url, self.method, self.headers, self.body = obj
+            self.rcId, self.url, self.method, self.headers, self.body = obj
 
     def setStartTime(self, startTime):
         self.startTime = startTime
 
     def getProperty(self):
-        return self.url, self.method, self.headers, self.body
+        return self.rcId, self.url, self.method, self.headers, self.body
 
     def getBody(self):
         return self.body
@@ -142,12 +125,16 @@ class RestCase:
     def getPId(self):
         return self.pId
 
+    def getRcId(self):
+        i, u, m, h, b = self.request.getProperty()
+        return i
+
     def getMethod(self):
-        u, m, h, b = self.request.getProperty()
+        i, u, m, h, b = self.request.getProperty()
         return m
 
     def getUrl(self):
-        u, m, h, b = self.request.getProperty()
+        i, u, m, h, b = self.request.getProperty()
         return u
 
     def checkResult(self):
