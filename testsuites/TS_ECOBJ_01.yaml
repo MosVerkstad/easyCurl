@@ -2,8 +2,7 @@ TS_ECOBJ_01:
     TESTCASES: 
         - TC_GET_NULL: 
             RESTCASES: 
-                - RCID: RC_GET
-                  URL: 'http://easyCurl.com/test/objs'
+                - URL: 'http://easyCurl.com/test/objs'
                   METHOD: 'GET'
                   HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
                   BODY: ''
@@ -12,36 +11,31 @@ TS_ECOBJ_01:
 
         - TC_CREATE_DELETE:
             RESTCASES: 
-                - RCID: RC_POST_MYOBJ01
-                  URL: 'http://easyCurl.com/test/objs'
+                - URL: 'http://easyCurl.com/test/objs'
                   METHOD: 'POST'
                   HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
                   BODY: '{"id":"myObj","description":" the obj created for testing purpose","version":"0.0.1","validity":true}'
                   EXPECT: 'STATUSCODE:201'
 
-                - RCID: RC_PUT_MYOBJ02
-                  URL: 'http://easyCurl.com/test/objs/myObj02'
+                - URL: 'http://easyCurl.com/test/objs/myObj02'
                   METHOD: 'PUT'
                   HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
                   BODY: '{"description":" the second obj created for testing purpose","version":"0.0.1","validity":true}'
                   EXPECT: 'STATUSCODE:201'
 
-                - RCID: RC_GET_OBJS
-                  URL: 'http://easyCurl.com/test/objs'
+                - URL: 'http://easyCurl.com/test/objs'
                   METHOD: 'GET'
                   HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
                   BODY: ''
                   EXPECT: 'STATUSCODE:200'
 
-                - RCID: RC_DELETE_MYOBJ01
-                  URL: 'http://easyCurl.com/test/objs/myObj01'
+                - URL: 'http://easyCurl.com/test/objs/myObj01'
                   METHOD: 'DELETE'
                   HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
                   BODY: ''
                   EXPECT: 'STATUSCODE:200'
 
-                - RCID: RC_DELETE_MYOBJ02
-                  URL: 'http://easyCurl.com/test/objs/myObj02'
+                - URL: 'http://easyCurl.com/test/objs/myObj02'
                   METHOD: 'DELETE'
                   HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
                   BODY: ''
@@ -49,8 +43,7 @@ TS_ECOBJ_01:
 
         - TC_GET_NULL:
             RESTCASES: 
-                - RCID: RC_GET
-                  URL: 'http://easyCurl.com/test/objs'
+                - URL: 'http://easyCurl.com/test/objs'
                   METHOD: 'GET'
                   HEADERS: ['Content-Type: application/json;charset=UTF-8', 'Accept: application/json']
                   BODY: ''
