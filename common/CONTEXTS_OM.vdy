@@ -71,3 +71,29 @@ RC_PM_DELETE_TEMPLATE:
     $KEYWORD_BODY   : $VALUE_DELETE_BODY
     $KEYWORD_EXPECT : $VALUE_DELETE_EXPECT
 
+# ---- BULK BODY ----
+BULK_CREATE_GROUPS_LINE_1         : '{ "create": { "type": "groups" } }'
+BULK_CREATE_GROUPS_LINE_HTTP      : '{ "id": "$GROUPS_ID_HTTP", "description": "$GROUPS_DESC_HTTP", "generation": "", "version": "1.0", "technologyDomain": "Cloud Infrastructure", "validity": true }'
+BULK_CREATE_METRICS_LINE_1        : '{ "create": { "type": "metrics", "parameters": { "groupId": "HTTP" } } }'
+BULK_CREATE_METRICS_LINE_HTTP_RATE: '{ "id": "$METRICS_ID_HTTP_RATE", "type": "CC", "aggregation": "Sum", "multiplicity": 1, "initialValue": 0, "reset": true, "description": "$METRICS_DESC_HTTP_RATE", "status": "Used" }'
+
+BULK_DELETE_METRICS_LINE_HTTP_RATE: '{ "delete": { "type": "metrics", "parameters": { "metricId": "$METRICS_ID_HTTP_RATE", "groupId": "$GROUPS_ID_HTTP" } } }'
+BULK_DELETE_GROUPS_LINE_HTTP:       '{ "delete": { "type": "groups", "parameters": { "groupId": "$GROUPS_ID_HTTP" } } }'
+
+BULK_DELETE_METRICS_HTTP_RATE: "$BULK_DELETE_METRICS_LINE_HTTP_RATE\n"
+BULK_DELETE_GROUPS_HTTP      : "$BULK_DELETE_GROUPS_LINE_HTTP\n"
+
+VALUE_BULK_POST_URL    : $REST_BASE_URI$URL_PM_BULK
+VALUE_BULK_POST_METHOD : $METHOD_POST
+VALUE_BULK_POST_HEADERS: $HEADERS_POST_BULK
+VALUE_BULK_POST_EXPECT : '$KEYWORD_STATUSCODE: $EXPECTED_STATUS_200'
+
+# ---- BULK POST TEMPLATE ----
+RC_PM_BULK_POST_TEMPLATE:
+    $KEYWORD_RCID   : $VALUE_RCID
+    $KEYWORD_URL    : $VALUE_BULK_POST_URL
+    $KEYWORD_METHOD : $VALUE_BULK_POST_METHOD
+    $KEYWORD_HEADERS: $VALUE_BULK_POST_HEADERS
+    $KEYWORD_BODY   : $VALUE_BULK_POST_BODY
+    $KEYWORD_EXPECT : $VALUE_BULK_POST_EXPECT
+
